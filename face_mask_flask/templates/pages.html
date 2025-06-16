@@ -1,0 +1,224 @@
+<!-- templates/pages.html -->
+
+{% if template == 'index' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Face Mask & Recognition</title>
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 0;
+    }
+    .navbar {
+      background-color: #333;
+      padding: 10px;
+      color: white;
+      font-weight: bold;
+    }
+    .navbar a {
+      color: white;
+      text-decoration: none;
+      margin: 0 20px;
+    }
+    h1 {
+      color: #333;
+      margin-top: 20px;
+    }
+    .controls button {
+      margin: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    #video {
+      border: 2px solid #ccc;
+      margin: 20px auto 0 auto;  /* centered horizontally */
+      display: block;
+      width: 640px;
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <a href="/">Home</a>
+    <a href="/register">Register</a>
+    <a href="/snapshots">Snapshots</a>
+  </div>
+
+  <h1>Live Face Mask Detection & Recognition</h1>
+
+  <div class="controls">
+    <button onclick="startCamera()">Start</button>
+    <button onclick="stopCamera()">Stop</button>
+    <button onclick="takeSnapshot()">Take Snapshot</button>
+  </div>
+
+  <img id="video" src="{{ url_for('video_feed') }}" />
+
+  <script>
+    function startCamera() {
+      document.getElementById("video").src = "{{ url_for('video_feed') }}";
+    }
+
+    function stopCamera() {
+      document.getElementById("video").src = "";
+    }
+
+    function takeSnapshot() {
+      fetch("/capture", { method: "POST" })
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === 'saved') {
+            alert("Manual snapshot saved!");
+          } else {
+            alert("Failed to save snapshot.");
+          }
+        });
+    }
+  </script>
+</body>
+</html>
+{% endif %}
+
+{% if template == 'register' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register Person</title>
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 0;
+    }
+    .navbar {
+      background-color: #333;
+      padding: 10px;
+      color: white;
+      font-weight: bold;
+    }
+    .navbar a {
+      color: white;
+      text-decoration: none;
+      margin: 0 20px;
+    }
+    h1 {
+      color: #333;
+      margin-top: 20px;
+    }
+    input, button {
+      margin: 10px;
+      padding: 10px;
+      font-size: 16px;
+    }
+    #video {
+      margin: 20px auto 0 auto;  /* centered horizontally */
+      display: block;
+      width: 640px;
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <a href="/">Home</a>
+    <a href="/register">Register</a>
+    <a href="/snapshots">Snapshots</a>
+  </div>
+
+  <h1>Register New Person</h1>
+
+  <form id="registerForm">
+    <input type="text" id="personName" placeholder="Enter person name" required />
+    <button type="submit">Start Registration</button>
+  </form>
+
+  <br><br>
+  <img id="video" src="" style="display:none;" />
+
+  <script>
+    const form = document.getElementById('registerForm');
+    const video = document.getElementById('video');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = document.getElementById('personName').value.trim();
+
+      if (!name) {
+        alert("Please enter a name.");
+        return;
+      }
+
+      fetch('/start_register?name=' + encodeURIComponent(name));
+      video.style.display = 'block';
+      video.src = '/capture_faces';
+    });
+  </script>
+</body>
+</html>
+{% endif %}
+
+{% if template == 'snapshots' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Saved Snapshots</title>
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 0;
+    }
+    .navbar {
+      background-color: #333;
+      padding: 10px;
+      color: white;
+      font-weight: bold;
+    }
+    .navbar a {
+      color: white;
+      text-decoration: none;
+      margin: 0 20px;
+    }
+    h1 {
+      color: #333;
+      margin-top: 30px;
+    }
+    img {
+      margin: 10px;
+      max-width: 300px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <a href="/">Home</a>
+    <a href="/register">Register</a>
+    <a href="/snapshots">Snapshots</a>
+  </div>
+
+  <h1>Saved Snapshots</h1>
+
+  {% if snapshots %}
+    <div style="display: flex; flex-wrap: wrap; justify-content: center;">
+      {% for snap in snapshots %}
+        <img src="{{ snap }}" alt="Snapshot">
+      {% endfor %}
+    </div>
+  {% else %}
+    <p>No snapshots found.</p>
+  {% endif %}
+</body>
+</html>
+{% endif %}

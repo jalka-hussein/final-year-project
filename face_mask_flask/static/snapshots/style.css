@@ -1,0 +1,55 @@
+/* Shared Navbar and Animations */
+body {
+  font-family: "Segoe UI", sans-serif;
+  background: linear-gradient(135deg, #1a1f2b, #283c63);
+  color: #e0e0e0;
+  margin: 0;
+  padding-top: 60px;
+  min-height: 100vh;
+}
+
+.navbar-custom {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #0c5fd9;
+  color: white;
+  padding: 12px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  z-index: 1000;
+}
+
+.navbar-custom h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.navbar-custom a {
+  margin-left: 15px;
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.navbar-custom a:hover {
+  color: #00e6e6;
+  transform: scale(1.1);
+}
+
+.fade-in-up {
+  opacity: 0;
+  transform: translateY(15px);
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
